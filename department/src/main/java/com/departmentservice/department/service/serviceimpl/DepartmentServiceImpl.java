@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -26,8 +27,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department getDepartment(Long id) {
-        return departmentRepository.findById(id).orElseThrow(() -> new NoSuchDepartmentExistsException("No Department Exist With Id :" + id));
+    public Optional<Department> getDepartment(Long id) {
+        return departmentRepository.findById(id);
+                //.orElseThrow(() -> new NoSuchDepartmentExistsException("No Department Exist With Id :" + id));
     }
 
     @Override
@@ -43,15 +45,15 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department updateDepartment(Department department, Long id) {
-        Department departmentToUpdate = getDepartment(id);
-        departmentToUpdate.setDepartmentName(department.getDepartmentName());
-        return departmentRepository.save(departmentToUpdate);
+        Optional<Department> departmentToUpdate = getDepartment(id);
+        departmentToUpdate.get().setDepartmentName(department.getDepartmentName());
+        return departmentRepository.save(departmentToUpdate.get());
     }
 
     @Override
     public void deleteDepartment(Long id) {
-        Department department = getDepartment(id);
-        if (department != null) {
+       Optional<Department> department = getDepartment(id);
+        if (department.isEmpty()) {
             departmentRepository.deleteById(id);
         }
     }

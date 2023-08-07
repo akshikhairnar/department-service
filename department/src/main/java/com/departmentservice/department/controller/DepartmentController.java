@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/departments")
@@ -26,10 +27,13 @@ public class DepartmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DepartmentDTO> getDepartment(@PathVariable("id") Long id) {
-        Department department = departmentService.getDepartment(id);
-        DepartmentDTO departmentDTO = DepartmentMapper.departmentDTOMapper(department);
-        return new ResponseEntity<>(departmentDTO, HttpStatus.OK);
+    public ResponseEntity<?> getDepartment(@PathVariable("id") Long id) {
+        Optional<Department> department = departmentService.getDepartment(id);
+        if (department.isEmpty()) {
+            return new ResponseEntity<>("Department not exist with id : " + id, HttpStatus.NO_CONTENT);
+        }
+        DepartmentDTO departmentDTO = DepartmentMapper.departmentDTOMapper(department.get());
+        return new ResponseEntity<DepartmentDTO>(departmentDTO, HttpStatus.OK);
     }
 
     @PostMapping
@@ -39,6 +43,7 @@ public class DepartmentController {
         DepartmentDTO addedDepartmentDTO = DepartmentMapper.departmentDTOMapper(addedDepartment);
         return new ResponseEntity<>(addedDepartmentDTO, HttpStatus.OK);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentDTO> updateDepartment(@RequestBody DepartmentDTO departmentDTO, @PathVariable("id") Long id) {

@@ -4,6 +4,7 @@ package com.departmentservice.department.service;
 import com.departmentservice.department.entity.Department;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DepartmentService {
 
@@ -11,7 +12,7 @@ public interface DepartmentService {
 
     List<Department> getAllDepartment();
 
-    Department getDepartment(Long id);
+    Optional<Department> getDepartment(Long id);
 
     Department addDepartment(Department department);
 
